@@ -1,25 +1,26 @@
-package com.mmall.concurrency;
+package com.mmall.concurrency.example.atomic;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicLong;
 
-import com.mmall.concurrency.annoations.NotThreadSafe;
+import com.mmall.concurrency.annoations.ThreadSafe;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@NotThreadSafe
-public class ConcurrencyTest
+@ThreadSafe
+public class AtomicExample2
 {
     //请求总数
     public static int clientTotal = 5000;
     
     //同时并发执行的线程数
-    public static volatile int threadTotal = 200;
+    public static int threadTotal = 200;
     
-    public static int count = 0;
+    public static AtomicLong count = new AtomicLong(0);
     
     public static void main(String[] args) throws Exception
     {
@@ -37,16 +38,17 @@ public class ConcurrencyTest
                 }catch (Exception e) {
                     log.error("Exception",e);
                 }
+                countDownLatch.countDown();
             });
-            countDownLatch.countDown();
         }
         countDownLatch.await();
         executorService.shutdown();
-        log.info("count:{}", count);
+        log.info("count:{}", count.get());
     }
     
     private static void add()
     {
-        count++;
+        count.incrementAndGet();
+        //count.getAndIncrement();
     }
 }
