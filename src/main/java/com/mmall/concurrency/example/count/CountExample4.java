@@ -1,27 +1,25 @@
-package com.mmall.concurrency.example.atomic;
+package com.mmall.concurrency.example.count;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicBoolean;
-import com.mmall.concurrency.annoations.ThreadSafe;
+
+import com.mmall.concurrency.annoations.NotThreadSafe;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@ThreadSafe
-public class AtomicExample6
+@NotThreadSafe
+public class CountExample4
 {
-    
-    private static AtomicBoolean isHappened = new AtomicBoolean(false);
-    
     //请求总数
     public static int clientTotal = 5000;
     
     //同时并发执行的线程数
     public static int threadTotal = 200;
     
+    public static  volatile int count = 0;
     
     public static void main(String[] args) throws Exception
     {
@@ -34,7 +32,7 @@ public class AtomicExample6
             executorService.execute(()->{
                 try{
                     semaphore.acquire();
-                    test();
+                    add();
                     semaphore.release();
                 }catch (Exception e) {
                     log.error("Exception",e);
@@ -44,14 +42,11 @@ public class AtomicExample6
         }
         countDownLatch.await();
         executorService.shutdown();
-        log.info("isHappened:{}", isHappened.get());
+        log.info("count:{}", count);
     }
     
-    private static void test()
+    private static void add()
     {
-        if(isHappened.compareAndSet(false, true))
-        {
-            log.info("execute");//only execute once
-        }
+        count++;
     }
 }
