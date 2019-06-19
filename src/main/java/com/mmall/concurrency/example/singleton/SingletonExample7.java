@@ -1,14 +1,15 @@
 package com.mmall.concurrency.example.singleton;
 
+import com.mmall.concurrency.annoations.Recommend;
 import com.mmall.concurrency.annoations.ThreadSafe;
 
 /**
- * 饿汉模式
- * 单例实例在类装载的时候创建
+ * 枚举模式  最安全的
  * @author zhang
  *
  */
 @ThreadSafe
+@Recommend
 public class SingletonExample7
 {
     //私有构造函数
@@ -17,24 +18,25 @@ public class SingletonExample7
         
     }
     
-  //单例对象 //注意静态域的顺序
-    private static SingletonExample7 instance = null;
-    
-    static{
-        instance = new SingletonExample7();
-    }
-    
-    //private static SingletonExample6 instance = null;
-    
-    //静态的工厂方法
     public static SingletonExample7 getInstance()
     {
-        return instance;
+        return Singleton.INSTANCE.getInstance();
     }
     
-    public static void main(String[] args)
-    {
-        System.out.println(getInstance().hashCode());
-        System.out.println(getInstance().hashCode());
+    private enum Singleton{
+        INSTANCE;
+        
+        private SingletonExample7 singleton;
+        
+        //JVM保证这个方法绝对只调用一次
+        Singleton()
+        {
+            singleton = new SingletonExample7();
+        }
+        
+        public SingletonExample7 getInstance()
+        {
+            return singleton;
+        }
     }
 }
