@@ -1,4 +1,4 @@
-package com.mmall.concurrency;
+package com.mmall.concurrency.example.commonUnsafe;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -11,15 +11,15 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @NotThreadSafe
-public class ConcurrencyTest
+public class StringExample1
 {
-    //请求总数
+  //请求总数
     public static int clientTotal = 5000;
     
     //同时并发执行的线程数
     public static volatile int threadTotal = 200;
     
-    public static int count = 0;
+    public static StringBuilder stringBuilder = new StringBuilder();
     
     public static void main(String[] args) throws Exception
     {
@@ -32,7 +32,7 @@ public class ConcurrencyTest
             executorService.execute(()->{
                 try{
                     semaphore.acquire();
-                    add();
+                    update();
                     semaphore.release();
                 }catch (Exception e) {
                     log.error("Exception",e);
@@ -42,11 +42,11 @@ public class ConcurrencyTest
         }
         countDownLatch.await();
         executorService.shutdown();
-        log.info("count:{}", count);
+        log.info("size:{}", stringBuilder.length());
     }
     
-    private static void add()
+    private static void update()
     {
-        count++;
+        stringBuilder.append("1");
     }
 }
